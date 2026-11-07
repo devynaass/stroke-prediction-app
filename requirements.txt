@@ -1,4 +1,0 @@
-streamlit
-pandas
-# Ganti baris di bawah menjadi versi yang tercetak di Colab, contoh: scikit-learn==1.6.1
-scikit-learn==1.6.1
