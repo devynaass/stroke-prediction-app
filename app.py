@@ -10,22 +10,17 @@ import streamlit as st
 # KONFIGURASI (ubah bagian ini saja)
 # =====================================================================
 APP_TITLE = "Prediksi Risiko Stroke"
-APP_ICON = "🧠"
-CREATORS = "(isi nama kelompok / anggota)"
+APP_ICON = "🌻"
+CREATORS = "Kelompok 1 PSD RB -- Devyna - Dharu - Ridho"
 
 BASE_DIR = Path(__file__).parent
 st.set_page_config(page_title=APP_TITLE, page_icon=APP_ICON, layout="wide")
 
 LABELS = {
-    "gender": "Jenis kelamin",
-    "age": "Usia (tahun)",
-    "hypertension": "Riwayat hipertensi",
-    "heart_disease": "Riwayat penyakit jantung",
-    "ever_married": "Pernah menikah",
-    "work_type": "Jenis pekerjaan",
-    "Residence_type": "Tempat tinggal",
-    "avg_glucose_level": "Rata-rata kadar glukosa (mg/dL)",
-    "bmi": "BMI (Indeks Massa Tubuh)",
+    "gender": "Jenis kelamin", "age": "Usia (tahun)", "hypertension": "Riwayat hipertensi",
+    "heart_disease": "Riwayat penyakit jantung", "ever_married": "Pernah menikah",
+    "work_type": "Jenis pekerjaan", "Residence_type": "Tempat tinggal",
+    "avg_glucose_level": "Rata-rata kadar glukosa (mg/dL)", "bmi": "BMI (Indeks Massa Tubuh)",
     "smoking_status": "Status merokok",
 }
 HELPS = {
@@ -47,9 +42,9 @@ VALUE_LABELS = {
                        "smokes": "Perokok aktif", "Unknown": "Tidak diketahui"},
 }
 GROUPS = [
-    ("👤 Data diri", ["gender", "age", "ever_married", "Residence_type"]),
-    ("❤️ Riwayat kesehatan", ["hypertension", "heart_disease", "avg_glucose_level", "bmi"]),
-    ("🚬 Gaya hidup & pekerjaan", ["work_type", "smoking_status"]),
+    ("Data diri", ["gender", "age", "ever_married", "Residence_type"]),
+    ("Riwayat kesehatan", ["hypertension", "heart_disease", "avg_glucose_level", "bmi"]),
+    ("Gaya hidup & pekerjaan", ["work_type", "smoking_status"]),
 ]
 STEP = {"age": 1.0, "avg_glucose_level": 0.5, "bmi": 0.1}
 PRESETS = {
@@ -70,47 +65,111 @@ MODEL_COMPARISON = pd.DataFrame({
     "Recall @threshold optimal": [0.80, 0.78, 0.80, 0.70],
 }).set_index("Model")
 
+
+# =====================================================================
+# BUNGA MATAHARI (SVG kecil, dipakai sebagai hiasan & penanda)
+# =====================================================================
+def sunflower(size=40, mood="happy", petals=12):
+    pet = "".join(
+        f'<ellipse cx="50" cy="21" rx="8.5" ry="17" transform="rotate({i * 360 / petals:.1f} 50 50)" '
+        f'fill="{"#FFD23F" if i % 2 == 0 else "#FFBE0B"}" stroke="#E99A00" stroke-width="1.2"/>'
+        for i in range(petals))
+    face = ""
+    if size >= 26 and mood:
+        mouth = {"happy": "M41 56 Q50 65 59 56", "flat": "M43 59 L57 59", "worried": "M42 62 Q50 54 58 62"}[mood]
+        face = ('<circle cx="42" cy="47" r="2.6" fill="#3B2412"/><circle cx="58" cy="47" r="2.6" fill="#3B2412"/>'
+                '<circle cx="36" cy="54" r="3.4" fill="#F4A6A0" opacity=".75"/>'
+                '<circle cx="64" cy="54" r="3.4" fill="#F4A6A0" opacity=".75"/>'
+                f'<path d="{mouth}" stroke="#3B2412" stroke-width="2.4" fill="none" stroke-linecap="round"/>')
+    return (f'<svg viewBox="0 0 100 100" width="{size}" height="{size}" xmlns="http://www.w3.org/2000/svg">'
+            f'{pet}<circle cx="50" cy="50" r="21" fill="#8B5A2B" stroke="#6B3F1D" stroke-width="2"/>{face}</svg>')
+
+
 # =====================================================================
 # STYLE
 # =====================================================================
 st.markdown("""
 <style>
-.block-container {padding-top: 1.6rem; max-width: 1250px;}
-#MainMenu, footer {visibility: hidden;}
-.hero {background: linear-gradient(135deg,#4f46e5 0%,#7c3aed 55%,#db2777 100%);
-       padding: 2rem 2.3rem; border-radius: 22px; color: #fff; margin-bottom: 1.2rem;
-       box-shadow: 0 12px 30px rgba(79,70,229,.25);}
-.hero h1 {margin: 0; font-size: 2.2rem; color: #fff; line-height: 1.2;}
-.hero p {margin: .5rem 0 0 0; opacity: .92; font-size: 1.02rem;}
-.chip {display: inline-block; background: rgba(255,255,255,.18); padding: .28rem .8rem;
-       border-radius: 999px; font-size: .8rem; margin: .8rem .45rem 0 0;}
-.card {border: 1px solid rgba(128,128,128,.25); border-radius: 16px; padding: 1rem 1.2rem;
-       background: rgba(128,128,128,.06);}
-.card h4 {margin: 0 0 .3rem 0;}
-.kpi {text-align: center; border: 1px solid rgba(128,128,128,.25); border-radius: 16px;
-      padding: .9rem .5rem; background: rgba(128,128,128,.06);}
-.kpi .v {font-size: 1.7rem; font-weight: 700;}
-.kpi .l {font-size: .8rem; opacity: .7;}
-.result {border-radius: 20px; padding: 1.5rem 1.7rem; color: #fff; margin-bottom: .8rem;
-         box-shadow: 0 10px 26px rgba(0,0,0,.18);}
-.r-low {background: linear-gradient(135deg,#059669,#10b981);}
-.r-mid {background: linear-gradient(135deg,#d97706,#f59e0b);}
-.r-high {background: linear-gradient(135deg,#dc2626,#f43f5e);}
-.result .tag {font-size: .85rem; letter-spacing: .06em; text-transform: uppercase; opacity: .9;}
-.result .big {font-size: 2.6rem; font-weight: 800; line-height: 1.1; margin: .2rem 0;}
-.result .sub {opacity: .95; font-size: .98rem;}
-.gauge {position: relative; height: 14px; border-radius: 999px; margin: 1.6rem 0 2rem 0;
-        background: linear-gradient(90deg,#10b981 0%,#f59e0b 50%,#ef4444 100%);}
-.mk {position: absolute; top: -7px; width: 5px; height: 28px; border-radius: 3px;}
-.mk.you {background: #111; box-shadow: 0 0 0 2px #fff;}
-.mk.thr {background: rgba(128,128,128,.9); width: 3px;}
-.mk-l {position: absolute; top: 26px; font-size: .72rem; transform: translateX(-50%); white-space: nowrap; opacity: .8;}
-.fx-row {display: flex; align-items: center; margin: .3rem 0; font-size: .88rem;}
-.fx-name {width: 46%; padding-right: .5rem;}
-.fx-bar {flex: 1; height: 10px; background: rgba(128,128,128,.15); border-radius: 6px; position: relative;}
-.fx-fill {position: absolute; top: 0; height: 10px; border-radius: 6px;}
-.fx-val {width: 70px; text-align: right; font-variant-numeric: tabular-nums; opacity: .8;}
-.note {font-size: .8rem; opacity: .7;}
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700;800&display=swap');
+:root {--ink:#4A2E14; --sun:#FFC83D; --sun-d:#F0A202; --cream:#FFF9E8; --line:#F5D77A; --leaf:#4C9A4A;}
+.stApp {font-family:'Nunito',sans-serif; color:var(--ink); background-color:var(--cream);
+        background-image:radial-gradient(#FFE6A3 1.3px, transparent 1.3px); background-size:24px 24px;}
+.block-container {padding-top:1.4rem; max-width:1250px;}
+#MainMenu, footer {visibility:hidden;}
+h1,h2,h3,h4 {font-family:'Baloo 2',sans-serif !important; color:var(--ink);}
+.stMarkdown, .stMarkdown p, label, [data-testid="stWidgetLabel"] p, [data-testid="stCaptionContainer"] {color:var(--ink);}
+[data-testid="stSidebar"] {background:#FFF1C2; border-right:3px dotted var(--line);}
+
+/* tab berbentuk pil */
+.stTabs [data-baseweb="tab-list"] {gap:8px; border-bottom:none;}
+.stTabs [data-baseweb="tab"] {background:#fff; border:2px solid var(--line); border-radius:999px;
+        padding:.45rem 1.2rem; font-weight:800; height:auto;}
+.stTabs [aria-selected="true"] {background:var(--sun); border-color:var(--sun-d);}
+.stTabs [data-baseweb="tab-highlight"], .stTabs [data-baseweb="tab-border"] {display:none;}
+
+/* tombol */
+button[kind="primary"], button[data-testid="stBaseButton-primary"], button[data-testid="stBaseButton-primaryFormSubmit"] {
+        background:#F59E0B; color:#3B2412; border:none; border-radius:999px; font-weight:800;
+        box-shadow:0 4px 0 #C77700; padding:.55rem 1.4rem;}
+button[kind="primary"]:hover, button[data-testid="stBaseButton-primary"]:hover,
+button[data-testid="stBaseButton-primaryFormSubmit"]:hover {background:#FFB52E; color:#3B2412; transform:translateY(-1px);}
+.stDownloadButton button {border-radius:999px; border:2px solid var(--sun-d); font-weight:700;}
+[data-testid="stForm"] {background:#fff; border:2px dashed var(--sun-d); border-radius:22px; padding:1.1rem 1.3rem;}
+
+/* hero */
+.hero {position:relative; overflow:hidden; background:linear-gradient(120deg,#FFE066 0%,#FFC83D 55%,#FFAE1A 100%);
+       border-radius:28px; padding:1.9rem 2.2rem 1.6rem; margin-bottom:1rem; border:3px solid #fff;
+       box-shadow:0 10px 0 #F0A202, 0 18px 30px rgba(240,162,2,.25);}
+.hero h1 {margin:0; font-size:2.5rem; line-height:1.1; color:var(--ink);}
+.hero p {margin:.45rem 0 0; font-size:1.05rem; font-weight:600; max-width:60%;}
+.chip {display:inline-block; background:rgba(255,255,255,.75); color:var(--ink); padding:.25rem .85rem;
+       border-radius:999px; font-size:.82rem; font-weight:700; margin:.9rem .45rem 0 0;}
+.hf span {position:absolute; display:block;}
+@media (max-width:760px){.hf{display:none}.hero p{max-width:100%}}
+.sway {transform-origin:50% 90%; animation:sway 4.5s ease-in-out infinite;}
+.d2 {animation-delay:-1.5s;} .d3 {animation-delay:-3s;}
+@keyframes sway {0%,100%{transform:rotate(-5deg)} 50%{transform:rotate(5deg)}}
+@media (prefers-reduced-motion:reduce){.sway{animation:none}}
+
+/* kartu & KPI */
+.card {border:2px solid var(--line); border-radius:20px; padding:1rem 1.3rem; background:#fff;}
+.card h4 {margin:0 0 .3rem;}
+.kpi {text-align:center; background:#fff; border:2px solid var(--line); border-top:8px solid var(--sun);
+      border-radius:18px; padding:.7rem .5rem;}
+.kpi .v {font-family:'Baloo 2',sans-serif; font-size:1.7rem; font-weight:800; line-height:1.2;}
+.kpi .l {font-size:.78rem; font-weight:700; opacity:.7;}
+.sec {display:flex; align-items:center; gap:.4rem; font-family:'Baloo 2',sans-serif; font-weight:700;
+      font-size:1.1rem; margin:.5rem 0 .2rem;}
+
+/* hasil */
+.result {position:relative; border-radius:24px; padding:1.4rem 1.6rem; margin-bottom:.6rem; border:3px solid #fff;
+         box-shadow:0 8px 0 rgba(0,0,0,.12);}
+.r-low {background:linear-gradient(135deg,#2E9E5B,#62C98A); color:#fff;}
+.r-mid {background:linear-gradient(135deg,#FFB703,#FFD45C); color:var(--ink);}
+.r-high {background:linear-gradient(135deg,#E4572E,#F58A5B); color:#fff;}
+.result .tag {font-size:.85rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase;}
+.result .big {font-family:'Baloo 2',sans-serif; font-size:3rem; font-weight:800; line-height:1.05;}
+.result .sub {font-weight:600; max-width:78%;}
+.badge {position:absolute; right:16px; top:16px; background:rgba(255,255,255,.9); border-radius:50%;
+        width:84px; height:84px; display:flex; align-items:center; justify-content:center;}
+.gauge {position:relative; height:16px; border-radius:999px; margin:1.8rem 0 2.2rem;
+        background:linear-gradient(90deg,#62C98A 0%,#FFC83D 50%,#E4572E 100%); box-shadow:inset 0 0 0 2px #fff;}
+.mk {position:absolute; transform:translateX(-50%);}
+.mk.thr {top:-8px; width:0; height:32px; border-left:3px dashed #4A2E14;}
+.mk.you {top:-13px;}
+.mk-l {position:absolute; top:28px; font-size:.72rem; font-weight:700; transform:translateX(-50%); white-space:nowrap;}
+.fx-row {display:flex; align-items:center; margin:.3rem 0; font-size:.9rem; font-weight:600;}
+.fx-name {width:46%; padding-right:.5rem;}
+.fx-bar {flex:1; height:12px; background:#F6E8BF; border-radius:8px; position:relative;}
+.fx-fill {position:absolute; top:0; height:12px; border-radius:8px;}
+.fx-val {width:72px; text-align:right; font-variant-numeric:tabular-nums;}
+.note {font-size:.8rem; opacity:.75;}
+.flow {display:flex; flex-wrap:wrap; gap:.5rem; align-items:center; margin:.4rem 0 1rem;}
+.flow .s {background:#fff; border:2px solid var(--line); border-radius:999px; padding:.3rem .9rem; font-weight:700;}
+.flow .a {font-weight:800; color:var(--sun-d);}
+.meadow {display:flex; justify-content:space-around; align-items:flex-end; border-bottom:10px solid #6DBB5A;
+         border-radius:0 0 8px 8px; margin:2.2rem 0 .4rem; padding:0 6%;}
+.stem {width:4px; background:var(--leaf); border-radius:3px; margin:-4px auto 0;}
 </style>
 """, unsafe_allow_html=True)
 
@@ -163,9 +222,9 @@ def band(p, thr):
 
 
 BAND_INFO = {
-    "low": ("r-low", "Risiko rendah", "Probabilitas masih jauh di bawah batas deteksi model.", "Rendah"),
-    "mid": ("r-mid", "Waspada", "Probabilitas mendekati batas deteksi model. Perhatikan faktor risikonya.", "Waspada"),
-    "high": ("r-high", "Risiko tinggi", "Probabilitas melewati batas deteksi, jadi model memprediksi kelas positif.", "Tinggi"),
+    "low": ("r-low", "Risiko rendah", "Probabilitas masih jauh di bawah batas deteksi model.", "Rendah", "happy"),
+    "mid": ("r-mid", "Waspada", "Probabilitas mendekati batas deteksi model. Perhatikan faktor risikonya.", "Waspada", "flat"),
+    "high": ("r-high", "Risiko tinggi", "Probabilitas melewati batas deteksi, jadi model memprediksi kelas positif.", "Tinggi", "worried"),
 }
 
 
@@ -194,7 +253,7 @@ def render_effects(effects, top=6):
     rows = []
     for col, v in eff.items():
         w = abs(v) / mx * 50
-        color = "#ef4444" if v > 0 else "#10b981"
+        color = "#E4572E" if v > 0 else "#2E9E5B"
         style = f"left:50%;width:{w}%;background:{color};" if v > 0 else f"left:{50 - w}%;width:{w}%;background:{color};"
         rows.append(
             f"<div class='fx-row'><div class='fx-name'>{fmt_label(col)}</div>"
@@ -208,21 +267,22 @@ def render_effects(effects, top=6):
 def render_result(row, thr):
     p = float(model.predict_proba(row)[0, 1])
     b = band(p, thr)
-    css, title, text, _ = BAND_INFO[b]
+    css, title, text, _, mood = BAND_INFO[b]
     verdict = POS if p >= thr else NEG
     st.markdown(
-        f"<div class='result {css}'><div class='tag'>{title}</div>"
-        f"<div class='big'>{p*100:.1f}%</div>"
-        f"<div class='sub'>Probabilitas kelas positif ({POS}). Prediksi model: <b>{verdict}</b>.<br>{text}</div></div>",
+        f"<div class='result {css}'><div class='badge'>{sunflower(64, mood)}</div>"
+        f"<div class='tag'>{title}</div><div class='big'>{p*100:.1f}%</div>"
+        f"<div class='sub'>Probabilitas kelas positif ({POS}), atau {p/thr:.1f}x dari batas keputusan. "
+        f"Prediksi model: <b>{verdict}</b>.<br>{text}</div></div>",
         unsafe_allow_html=True)
 
     scale = max(3 * thr, min(1.0, p * 1.25))
-    you = min(p / scale * 100, 99)
+    you = min(p / scale * 100, 97)
     tpos = min(thr / scale * 100, 99)
     st.markdown(
         f"<div class='gauge'>"
         f"<div class='mk thr' style='left:{tpos}%'></div><div class='mk-l' style='left:{tpos}%'>batas {thr*100:.1f}%</div>"
-        f"<div class='mk you' style='left:{you}%'></div></div>",
+        f"<div class='mk you' style='left:{you}%'>{sunflower(40, mood)}</div></div>",
         unsafe_allow_html=True)
 
     st.markdown("**Faktor yang paling berpengaruh pada hasil ini**")
@@ -240,7 +300,7 @@ def render_result(row, thr):
 # SIDEBAR
 # =====================================================================
 with st.sidebar:
-    st.markdown(f"### {APP_ICON} {APP_TITLE}")
+    st.markdown(f"<div class='sec'>{sunflower(34)} {APP_TITLE}</div>", unsafe_allow_html=True)
     st.caption("Dashboard prediksi dengan model klasifikasi terbaik dari perbandingan 4 model.")
     st.markdown("#### Pengaturan threshold")
     mode = st.radio("Batas keputusan",
@@ -259,18 +319,27 @@ with st.sidebar:
 # =====================================================================
 # HERO
 # =====================================================================
-auc = METRICS.get("ROC-AUC")
-chips = f"<span class='chip'>Model: {meta['model_name']}</span>"
-if auc is not None:
-    chips += f"<span class='chip'>ROC-AUC {auc:.3f}</span>"
-chips += f"<span class='chip'>Kelas positif: {POS}</span><span class='chip'>{len(FEATURES)} fitur input</span>"
+chips = f"<span class='chip'>Model: {meta['model_name']}</span><span class='chip'>Kelas positif: {POS}</span>"
+flowers = (f"<div class='hf'><span class='sway' style='right:3%;top:10%'>{sunflower(104)}</span>"
+           f"<span class='sway d2' style='right:19%;top:58%'>{sunflower(56)}</span>"
+           f"<span class='sway d3' style='right:27%;top:8%'>{sunflower(38)}</span></div>")
 st.markdown(
-    f"<div class='hero'><h1>{APP_ICON} {APP_TITLE}</h1>"
-    f"<p>Masukkan data pasien, dan model machine learning akan memperkirakan risikonya.</p>"
-    f"{chips}<p style='font-size:.85rem;margin-top:.9rem'>Dibuat oleh: <b>{CREATORS}</b></p></div>",
+    f"<div class='hero'>{flowers}<h1>{APP_TITLE}</h1>"
+    f"<p>Masukkan data pasien, lalu model machine learning akan memperkirakan risikonya.</p>"
+    f"{chips}<div style='font-size:.88rem;margin-top:.9rem;font-weight:600'>Dibuat oleh: <b>{CREATORS}</b></div></div>",
     unsafe_allow_html=True)
 
-tab1, tab2, tab3 = st.tabs(["🩺 Prediksi Individu", "📂 Prediksi Massal (CSV)", "📊 Tentang Model"])
+auc = METRICS.get("ROC-AUC")
+k = st.columns(4)
+kpis = [(meta["model_name"], "Model terpilih"),
+        (f"{auc:.3f}" if auc is not None else "-", "ROC-AUC data uji"),
+        (f"{THR:.3f}", "Threshold aktif"),
+        (str(len(FEATURES)), "Fitur input")]
+for c, (v, l) in zip(k, kpis):
+    c.markdown(f"<div class='kpi'><div class='v'>{v}</div><div class='l'>{l}</div></div>", unsafe_allow_html=True)
+st.markdown("")
+
+tab1, tab2, tab3 = st.tabs(["Prediksi Individu", "Prediksi Massal (CSV)", "Tentang Model"])
 
 # =====================================================================
 # TAB 1: INDIVIDU
@@ -309,7 +378,7 @@ with tab1:
     with left:
         st.selectbox("Mulai cepat dengan contoh profil", list(PRESETS.keys()), key="preset", on_change=apply_preset)
         grouped = {c for _, cols in GROUPS for c in cols}
-        groups = GROUPS + ([("📋 Lainnya", [c for c in FEATURES if c not in grouped])]
+        groups = GROUPS + ([("Lainnya", [c for c in FEATURES if c not in grouped])]
                            if any(c not in grouped for c in FEATURES) else [])
         values = {}
         with st.form("form_prediksi"):
@@ -317,12 +386,12 @@ with tab1:
                 cols = [c for c in cols if c in FEATURES]
                 if not cols:
                     continue
-                st.markdown(f"**{title}**")
+                st.markdown(f"<div class='sec'>{sunflower(24, None)} {title}</div>", unsafe_allow_html=True)
                 grid = st.columns(2)
                 for i, c in enumerate(cols):
                     with grid[i % 2]:
                         values[c] = render_input(c)
-            submitted = st.form_submit_button("🔍 Prediksi sekarang", type="primary")
+            submitted = st.form_submit_button("Prediksi sekarang", type="primary")
         if submitted:
             st.session_state["last_input"] = clean_input(pd.DataFrame(values, index=[0]))
 
@@ -336,7 +405,8 @@ with tab1:
                 st.dataframe(show, hide_index=True)
         else:
             st.markdown(
-                "<div class='card'><h4>Hasil akan tampil di sini</h4>"
+                f"<div class='card' style='text-align:center;padding:2rem 1.3rem'>{sunflower(90)}"
+                "<h4>Hasil akan tampil di sini</h4>"
                 "Isi data di sebelah kiri atau pilih contoh profil, lalu klik <b>Prediksi sekarang</b>.</div>",
                 unsafe_allow_html=True)
 
@@ -346,7 +416,7 @@ with tab1:
 with tab2:
     st.markdown("Upload file CSV berisi banyak pasien sekaligus. Kolom harus sama dengan template.")
     template = pd.DataFrame([{c: (NUM[c]["median"] if c in NUM else CAT[c][0]) for c in FEATURES}])
-    st.download_button("⬇️ Download template CSV", template.to_csv(index=False).encode("utf-8"),
+    st.download_button("Download template CSV", template.to_csv(index=False).encode("utf-8"),
                        "template_input.csv", "text/csv")
     up = st.file_uploader("Upload CSV", type=["csv"])
     if up is not None:
@@ -368,8 +438,9 @@ with tab2:
             k3.markdown(f"<div class='kpi'><div class='v'>{n_pos/len(out)*100:.1f}%</div><div class='l'>Proporsi positif</div></div>", unsafe_allow_html=True)
             st.markdown("")
             st.dataframe(out)
-            st.bar_chart(out["tingkat_risiko"].value_counts())
-            st.download_button("⬇️ Download hasil prediksi", out.to_csv(index=False).encode("utf-8"),
+            order = ["Rendah", "Waspada", "Tinggi"]
+            st.bar_chart(out["tingkat_risiko"].value_counts().reindex(order, fill_value=0), color="#F5A623")
+            st.download_button("Download hasil prediksi", out.to_csv(index=False).encode("utf-8"),
                                "hasil_prediksi.csv", "text/csv", type="primary")
 
 # =====================================================================
@@ -386,7 +457,9 @@ with tab3:
                          f"<div class='l'>{key} (threshold 0.5)</div></div>", unsafe_allow_html=True)
     st.markdown("")
     st.markdown("#### Perbandingan 4 model")
-    st.dataframe(MODEL_COMPARISON)
+    c1, c2 = st.columns([1.3, 1], gap="large")
+    c1.dataframe(MODEL_COMPARISON)
+    c2.bar_chart(MODEL_COMPARISON["ROC-AUC (uji)"], color="#F5A623")
     st.markdown("#### Cara membaca threshold")
     st.markdown(
         f"- Data sangat **tidak seimbang** (sekitar 5% kasus positif), sehingga akurasi tinggi bisa menyesatkan.\n"
@@ -395,7 +468,19 @@ with tab3:
         f"(lebih banyak peringatan yang ternyata salah).\n"
         f"- Untuk deteksi dini penyakit, melewatkan kasus biasanya lebih berbahaya daripada peringatan keliru.")
     st.markdown("#### Alur model")
-    st.markdown("Imputasi missing value → scaling fitur numerik → one-hot encoding fitur kategorikal → klasifikasi. "
-                "Semua langkah tersimpan dalam satu pipeline sehingga input dashboard diproses persis seperti saat training.")
+    st.markdown("<div class='flow'><span class='s'>Imputasi missing value</span><span class='a'>&rarr;</span>"
+                "<span class='s'>Scaling fitur numerik</span><span class='a'>&rarr;</span>"
+                "<span class='s'>One-hot encoding kategorikal</span><span class='a'>&rarr;</span>"
+                "<span class='s'>Klasifikasi</span></div>", unsafe_allow_html=True)
+    st.markdown("Semua langkah tersimpan dalam satu pipeline sehingga input dashboard diproses persis seperti saat training.")
     st.caption("Keterbatasan: hanya 50 kasus positif pada data uji, sehingga angka bisa bergeser pada data lain. "
                "Dashboard ini bukan pengganti diagnosis dokter.")
+
+# =====================================================================
+# FOOTER: padang bunga matahari
+# =====================================================================
+plants = "".join(
+    f"<div class='sway' style='animation-delay:-{i * .6:.1f}s'>{sunflower(s)}<div class='stem' style='height:{h}px'></div></div>"
+    for i, (s, h) in enumerate([(30, 24), (22, 12), (38, 34), (26, 16), (34, 28), (22, 10), (36, 30), (26, 18)]))
+st.markdown(f"<div class='meadow'>{plants}</div>", unsafe_allow_html=True)
+st.caption("Dibuat dengan Streamlit. Bukan alat diagnosis medis.")
