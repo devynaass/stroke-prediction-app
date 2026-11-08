@@ -85,6 +85,61 @@ def sunflower(size=40, mood="happy", petals=12):
             f'{pet}<circle cx="50" cy="50" r="21" fill="#8B5A2B" stroke="#6B3F1D" stroke-width="2"/>{face}</svg>')
 
 
+
+def brain(size=80, level="low"):
+    fill = {"low": "#BFE8CB", "mid": "#FFE08A", "high": "#F7A8A0"}[level]
+    st_ = "#2B3A67"
+    lobes = ("M49 20 C40 10 22 12 16 26 C6 30 6 46 13 52 C8 62 16 76 29 74 C34 84 47 84 49 78 Z "
+             "M51 20 C60 10 78 12 84 26 C94 30 94 46 87 52 C92 62 84 76 71 74 C66 84 53 84 51 78 Z")
+    folds = ("M30 30 C36 34 36 42 30 46 M24 56 C32 54 38 60 34 68 M70 30 C64 34 64 42 70 46 M76 56 C68 54 62 60 66 68 "
+             "M49 24 L49 76")
+    clot = ('<circle cx="68" cy="42" r="8" fill="#B3203A" stroke="#fff" stroke-width="2"/>'
+            '<path d="M60 42 H50" stroke="#B3203A" stroke-width="3" stroke-linecap="round"/>') if level == "high" else ""
+    return (f'<svg viewBox="0 0 100 100" width="{size}" height="{size}" xmlns="http://www.w3.org/2000/svg">'
+            f'<path d="M44 78 L44 90 Q50 96 56 90 L56 78" fill="{fill}" stroke="{st_}" stroke-width="2.5" stroke-linejoin="round"/>'
+            f'<path d="{lobes}" fill="{fill}" stroke="{st_}" stroke-width="2.5" stroke-linejoin="round"/>'
+            f'<path d="{folds}" fill="none" stroke="{st_}" stroke-width="2" stroke-linecap="round" opacity=".55"/>{clot}</svg>')
+
+
+_P = "M0 28 H260 L290 28 L310 6 L335 44 L355 28 H620 L650 28 L670 6 L695 44 L715 28 H1000"
+PULSE = ('<svg class="pulse" viewBox="0 0 1000 46" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">'
+         f'<path d="{_P}" fill="none" stroke="#FF6B6B" stroke-width="2" opacity=".3" vector-effect="non-scaling-stroke"/>'
+         f'<path class="beat" d="{_P}" pathLength="1000" fill="none" stroke="#FF8A80" stroke-width="3" '
+         'stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/></svg>')
+
+TIPS = {
+    "low": ["Pertahankan pola makan seimbang dan aktif bergerak, sekitar 150 menit per minggu.",
+            "Cek tekanan darah dan gula darah secara berkala.", "Hindari rokok."],
+    "mid": ["Cek tekanan darah dan kadar gula darah dalam waktu dekat.",
+            "Kurangi garam, gorengan, dan minuman manis.", "Kalau merokok, mulai kurangi dan targetkan berhenti."],
+    "high": ["Bawa hasil ini ke dokter atau puskesmas untuk pemeriksaan lanjutan.",
+             "Pantau tekanan darah dan gula darah secara rutin.",
+             "Hafalkan tanda stroke SeGeRa dan segera ke RS bila muncul."],
+}
+SEGERA = [
+    ("Senyum tidak simetris", "Sudut mulut tampak turun atau mencong sebelah saat tersenyum."),
+    ("Gerak separuh tubuh melemah", "Lengan atau tungkai tiba-tiba lemas dan sulit diangkat."),
+    ("Bicara pelo", "Bicara tidak jelas, tiba-tiba tidak bisa bicara, atau sulit memahami ucapan."),
+    ("Kebas atau kesemutan", "Terjadi di separuh tubuh, muncul mendadak."),
+    ("Rabun mendadak", "Pandangan kabur atau menghilang pada satu atau kedua mata."),
+    ("Sakit kepala hebat", "Nyeri kepala berat yang datang tiba-tiba tanpa sebab jelas."),
+]
+RISKS = [
+    ("Usia", "Risiko naik seiring bertambahnya usia, terutama setelah 55 tahun."),
+    ("Hipertensi", "Tekanan darah tinggi merusak dinding pembuluh darah otak."),
+    ("Penyakit jantung", "Gangguan irama atau katup jantung bisa mengirim gumpalan ke otak."),
+    ("Kadar glukosa", "Gula darah tinggi dalam jangka panjang memperburuk pembuluh darah."),
+    ("BMI", "Berat badan berlebih sering ikut mendorong hipertensi dan diabetes."),
+    ("Merokok", "Rokok mempercepat penyempitan dan pengerasan pembuluh darah."),
+]
+
+
+def cards(items, numbered=True):
+    return "<div class='fgrid'>" + "".join(
+        f"<div class='fc'><span class='n'>{i + 1 if numbered else ''}</span><div class='t'>{t}</div><div>{d}</div></div>"
+        for i, (t, d) in enumerate(items)) + "</div>"
+
+
 # =====================================================================
 # STYLE
 # =====================================================================
@@ -170,6 +225,28 @@ button[data-testid="stBaseButton-primaryFormSubmit"]:hover {background:#FFB52E; 
 .meadow {display:flex; justify-content:space-around; align-items:flex-end; border-bottom:10px solid #6DBB5A;
          border-radius:0 0 8px 8px; margin:2.2rem 0 .4rem; padding:0 6%;}
 .stem {width:4px; background:var(--leaf); border-radius:3px; margin:-4px auto 0;}
+
+/* ---- tema stroke ---- */
+.hero {background:linear-gradient(120deg,#1E2A4A 0%,#2B3A67 60%,#43306B 100%); color:#FFF4D6;
+       padding-bottom:3.4rem; box-shadow:0 10px 0 #E4572E, 0 18px 30px rgba(30,42,74,.3);}
+.hero h1 {color:#FFF4D6;}
+.chip {background:rgba(255,255,255,.14); color:#FFF4D6;}
+.hb {position:absolute; right:5%; top:12%;}
+.pulse {position:absolute; left:0; bottom:6px; width:100%; height:44px;}
+.pulse .beat {stroke-dasharray:140 860; animation:run 3.4s linear infinite;}
+@keyframes run {from{stroke-dashoffset:1000} to{stroke-dashoffset:0}}
+@media (max-width:760px){.hb{display:none}}
+.alert {background:#E4572E; color:#fff; border-radius:18px; padding:.8rem 1.2rem; font-weight:700;
+        border:3px solid #fff; box-shadow:0 5px 0 #B93E1C; margin:.2rem 0 .6rem;}
+.fgrid {display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:.8rem; margin:.5rem 0 1rem;}
+.fc {position:relative; background:#fff; border:2px solid var(--line); border-radius:18px; padding:.9rem 1rem .9rem 3.2rem;
+     font-size:.92rem;}
+.fc .n {position:absolute; left:.8rem; top:.9rem; width:1.7rem; height:1.7rem; border-radius:50%; background:#2B3A67;
+        color:#FFF4D6; font-weight:800; display:flex; align-items:center; justify-content:center;}
+.fc .t {font-family:'Baloo 2',sans-serif; font-weight:800; font-size:1.05rem; line-height:1.2; margin-bottom:.2rem;}
+.tip {border-left:5px solid #E4572E; background:#fff; border-radius:0 12px 12px 0; padding:.4rem .8rem;
+      margin:.35rem 0; font-size:.9rem; font-weight:600;}
+.kpi {border-top-color:#E4572E;}
 </style>
 """, unsafe_allow_html=True)
 
@@ -270,7 +347,7 @@ def render_result(row, thr):
     css, title, text, _, mood = BAND_INFO[b]
     verdict = POS if p >= thr else NEG
     st.markdown(
-        f"<div class='result {css}'><div class='badge'>{sunflower(64, mood)}</div>"
+        f"<div class='result {css}'><div class='badge'>{brain(64, b)}</div>"
         f"<div class='tag'>{title}</div><div class='big'>{p*100:.1f}%</div>"
         f"<div class='sub'>Probabilitas kelas positif ({POS}), atau {p/thr:.1f}x dari batas keputusan. "
         f"Prediksi model: <b>{verdict}</b>.<br>{text}</div></div>",
@@ -291,6 +368,8 @@ def render_result(row, thr):
     except Exception:
         st.caption("Penjelasan faktor tidak tersedia untuk model ini.")
 
+    st.markdown("**Langkah yang bisa dilakukan**")
+    st.markdown("".join(f"<div class='tip'>{t}</div>" for t in TIPS[b]), unsafe_allow_html=True)
     if p >= thr:
         st.warning("Hasil ini hanya indikasi awal dari model statistik. Silakan konsultasikan dengan tenaga medis.")
     return p
@@ -300,7 +379,7 @@ def render_result(row, thr):
 # SIDEBAR
 # =====================================================================
 with st.sidebar:
-    st.markdown(f"<div class='sec'>{sunflower(34)} {APP_TITLE}</div>", unsafe_allow_html=True)
+    st.markdown(f"<div class='sec'>{brain(34, 'low')} {APP_TITLE}</div>", unsafe_allow_html=True)
     st.caption("Dashboard prediksi dengan model klasifikasi terbaik dari perbandingan 4 model.")
     st.markdown("#### Pengaturan threshold")
     mode = st.radio("Batas keputusan",
@@ -320,9 +399,7 @@ with st.sidebar:
 # HERO
 # =====================================================================
 chips = f"<span class='chip'>Model: {meta['model_name']}</span><span class='chip'>Kelas positif: {POS}</span>"
-flowers = (f"<div class='hf'><span class='sway' style='right:3%;top:10%'>{sunflower(104)}</span>"
-           f"<span class='sway d2' style='right:19%;top:58%'>{sunflower(56)}</span>"
-           f"<span class='sway d3' style='right:27%;top:8%'>{sunflower(38)}</span></div>")
+flowers = (f"<div class='hb'>{brain(120, 'high')}</div><div class='hf'><span class='sway d2' style='right:21%;top:50%'>{sunflower(52)}</span><span class='sway d3' style='right:2%;top:66%'>{sunflower(36)}</span></div>{PULSE}")
 st.markdown(
     f"<div class='hero'>{flowers}<h1>{APP_TITLE}</h1>"
     f"<p>Masukkan data pasien, lalu model machine learning akan memperkirakan risikonya.</p>"
@@ -337,9 +414,9 @@ kpis = [(meta["model_name"], "Model terpilih"),
         (str(len(FEATURES)), "Fitur input")]
 for c, (v, l) in zip(k, kpis):
     c.markdown(f"<div class='kpi'><div class='v'>{v}</div><div class='l'>{l}</div></div>", unsafe_allow_html=True)
-st.markdown("")
+st.markdown("<div class='alert'>Curiga ada tanda stroke pada seseorang? Jangan menunggu hasil dashboard. Segera bawa ke IGD terdekat atau hubungi 119.</div>", unsafe_allow_html=True)
 
-tab1, tab2, tab3 = st.tabs(["Prediksi Individu", "Prediksi Massal (CSV)", "Tentang Model"])
+tab1, tab2, tab3, tab4 = st.tabs(["Prediksi Individu", "Prediksi Massal (CSV)", "Tentang Model", "Kenali Stroke"])
 
 # =====================================================================
 # TAB 1: INDIVIDU
@@ -405,7 +482,7 @@ with tab1:
                 st.dataframe(show, hide_index=True)
         else:
             st.markdown(
-                f"<div class='card' style='text-align:center;padding:2rem 1.3rem'>{sunflower(90)}"
+                f"<div class='card' style='text-align:center;padding:2rem 1.3rem'>{brain(96, 'low')}"
                 "<h4>Hasil akan tampil di sini</h4>"
                 "Isi data di sebelah kiri atau pilih contoh profil, lalu klik <b>Prediksi sekarang</b>.</div>",
                 unsafe_allow_html=True)
@@ -475,6 +552,19 @@ with tab3:
     st.markdown("Semua langkah tersimpan dalam satu pipeline sehingga input dashboard diproses persis seperti saat training.")
     st.caption("Keterbatasan: hanya 50 kasus positif pada data uji, sehingga angka bisa bergeser pada data lain. "
                "Dashboard ini bukan pengganti diagnosis dokter.")
+
+with tab4:
+    st.markdown("#### Kenali tanda stroke: SeGeRa ke RS")
+    st.markdown(cards(SEGERA), unsafe_allow_html=True)
+    st.markdown("<div class='alert'>Catat jam mulai gejala dan segera ke IGD. Pada stroke, setiap menit berarti "
+                "lebih banyak sel otak yang bisa terselamatkan.</div>", unsafe_allow_html=True)
+    st.markdown("#### Dua jenis stroke")
+    st.markdown(cards([("Stroke iskemik", "Pembuluh darah otak tersumbat gumpalan. Ini jenis yang paling banyak terjadi."),
+                       ("Stroke hemoragik", "Pembuluh darah otak pecah sehingga terjadi perdarahan di otak.")], False),
+                unsafe_allow_html=True)
+    st.markdown("#### Faktor risiko yang dipakai model ini")
+    st.markdown(cards(RISKS), unsafe_allow_html=True)
+    st.caption("Informasi ini bersifat edukasi umum dan bukan pengganti penilaian tenaga medis.")
 
 # =====================================================================
 # FOOTER: padang bunga matahari
