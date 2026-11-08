@@ -11,7 +11,7 @@ import streamlit as st
 # =====================================================================
 APP_TITLE = "Prediksi Risiko Stroke"
 APP_ICON = "🌻"
-CREATORS = "Kelompok 1 PSD RB -- Devyna - Dharu - Ridho"
+CREATORS = "Kelompok 1 PSD RB: Devyna Sonya Palupi Sanjaya 123450007 - Dharu Cahyoaji Sasongko 123450023 - Ridho Benedictus Togi Manik 123450060"
 
 BASE_DIR = Path(__file__).parent
 st.set_page_config(page_title=APP_TITLE, page_icon=APP_ICON, layout="wide")
@@ -230,6 +230,7 @@ button[data-testid="stBaseButton-primaryFormSubmit"]:hover {background:#FFB52E; 
 .hero {background:linear-gradient(120deg,#1E2A4A 0%,#2B3A67 60%,#43306B 100%); color:#FFF4D6;
        padding-bottom:3.4rem; box-shadow:0 10px 0 #E4572E, 0 18px 30px rgba(30,42,74,.3);}
 .hero h1 {color:#FFF4D6;}
+.stApp .hero p {color:#fff;}
 .chip {background:rgba(255,255,255,.14); color:#FFF4D6;}
 .hb {position:absolute; right:5%; top:12%;}
 .pulse {position:absolute; left:0; bottom:6px; width:100%; height:44px;}
